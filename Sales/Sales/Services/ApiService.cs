@@ -1,4 +1,4 @@
-﻿namespace Sales.Services
+﻿    namespace Sales.Services
 {
     using System;
     using System.Collections.Generic;
@@ -110,5 +110,39 @@
                 };
             }
         }
+
+        public async Task<Response> Delete(string urlBase, string prefix, string controller, int id)
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(urlBase);
+                var url = $"{prefix}{controller}/{id}";
+                var response = await client.DeleteAsync(url);
+                var answer = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = answer,
+                    };
+                }
+
+                return new Response
+                {
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
     }
 }
